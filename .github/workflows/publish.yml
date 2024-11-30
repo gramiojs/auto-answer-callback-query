@@ -35,7 +35,7 @@ jobs:
               run: tsc --noEmit
 
             - name: Setup Deno
-              uses: denoland/setup-deno@v1
+              uses: denoland/setup-deno@v2
 
             - name: Publish package to JSR
               run: deno publish --allow-dirty --unstable-sloppy-imports --allow-slow-types
