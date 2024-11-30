@@ -20,9 +20,24 @@ const bot = new Bot(process.env.BOT_TOKEN as string)
         })
     )
     .callbackQuery("test", () => {
-        return context.send("Hii"); // The plugin will call an answerCallbackQuery method since you didn't do it
+        // The plugin will call an answerCallbackQuery method since you didn't do it
+        return context.send("Hii");
     })
     .callbackQuery("test2", (context) => {
-        return context.answer("HII"); // you already answered so plugin won't try to answer
+        // you already answered so plugin won't try to answer
+        return context.answer("HII");
     });
+```
+
+### Params
+
+You can pass params for [answerCallbackQuery](https://core.telegram.org/bots/api#answercallbackquery) method
+
+```ts
+bot.extend(
+    autoAnswerCallbackQuery({
+        text: "auto-answered",
+        show_alert: true,
+    })
+);
 ```

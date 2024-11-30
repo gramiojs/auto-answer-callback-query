@@ -37,7 +37,9 @@ import {
  *
  * @param params Params object for {@link APIMethods.answerCallbackQuery | answerCallbackQuery} method
  */
-export function autoAnswerCallbackQuery(params?: AnswerCallbackQueryParams) {
+export function autoAnswerCallbackQuery(
+	params?: Partial<AnswerCallbackQueryParams>,
+) {
 	return new Plugin("@gramio/auto-answer-callback-query").on(
 		"callback_query",
 		async (context, next) => {
