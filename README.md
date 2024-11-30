@@ -36,8 +36,11 @@ You can pass params for [answerCallbackQuery](https://core.telegram.org/bots/api
 ```ts
 bot.extend(
     autoAnswerCallbackQuery({
-        text: "auto-answered",
+        text: "Auto answer",
         show_alert: true,
     })
 );
 ```
+
+> [!IMPORTANT]
+> This plugin hijack the `context.answerCallbackQuery` (`context.answer` too) method to determine if the callback query was already answered or not. Please avoid global usage of `bot.api.answerCallbackQuery` method in context because plugin can not work properly in this case.
