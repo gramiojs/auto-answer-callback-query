@@ -39,7 +39,7 @@ import {
  */
 export function autoAnswerCallbackQuery(
 	params?: Partial<AnswerCallbackQueryParams>,
-) {
+): Plugin {
 	return new Plugin("@gramio/auto-answer-callback-query").on(
 		"callback_query",
 		async (context, next) => {
