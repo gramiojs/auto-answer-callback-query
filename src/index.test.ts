@@ -6,16 +6,6 @@ import { autoAnswerCallbackQuery } from "./index.js";
 /** Wait for the plugin's post-handler async middleware to complete */
 const tick = () => new Promise((r) => setTimeout(r, 50));
 
-// TODO: replace with env.filterApiCalls("answerCallbackQuery") after @gramio/test 0.4.0+
-function getAnswerCalls(env: TelegramTestEnvironment) {
-	return env.apiCalls
-		.filter((c) => c.method === "answerCallbackQuery")
-		.map((c) => ({
-			...c,
-			params: c.params as Record<string, unknown>,
-		}));
-}
-
 describe("autoAnswerCallbackQuery", () => {
 	it("should auto-answer when handler doesn't answer", async () => {
 		const bot = new Bot("test")
@@ -33,7 +23,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("test");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 
 	it("should not double-answer when handler calls context.answer()", async () => {
@@ -52,7 +42,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("answered");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 
 	it("should not double-answer when handler calls context.answerCallbackQuery()", async () => {
@@ -73,7 +63,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("direct");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 
 	it("should pass custom params to auto-answer", async () => {
@@ -97,7 +87,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("custom");
 		await tick();
 
-		const calls = getAnswerCalls(env);
+		const calls = env.filterApiCalls("answerCallbackQuery");
 		expect(calls).toHaveLength(1);
 		expect(calls[0].params.text).toBe("Auto answer");
 		expect(calls[0].params.show_alert).toBe(true);
@@ -117,7 +107,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("noop");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 
 	// --- Complex handler scenarios ---
@@ -138,7 +128,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("throws");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 
 	it("should still auto-answer when async handler rejects", async () => {
@@ -158,7 +148,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("rejects");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 
 	it("should preserve show_alert:true when handler answers with it", async () => {
@@ -180,7 +170,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("alert");
 		await tick();
 
-		const calls = getAnswerCalls(env);
+		const calls = env.filterApiCalls("answerCallbackQuery");
 		expect(calls).toHaveLength(1);
 		expect(calls[0].params.show_alert).toBe(true);
 		expect(calls[0].params.text).toBe("Important!");
@@ -205,7 +195,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("alert-direct");
 		await tick();
 
-		const calls = getAnswerCalls(env);
+		const calls = env.filterApiCalls("answerCallbackQuery");
 		expect(calls).toHaveLength(1);
 		expect(calls[0].params.show_alert).toBe(true);
 		expect(calls[0].params.text).toBe("Direct alert!");
@@ -229,7 +219,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("async-work");
 		await tick();
 
-		const calls = getAnswerCalls(env);
+		const calls = env.filterApiCalls("answerCallbackQuery");
 		expect(calls).toHaveLength(1);
 		expect(calls[0].params.text).toBe("Done!");
 		expect(calls[0].params.show_alert).toBe(true);
@@ -252,7 +242,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("throw-after-work");
 		await tick();
 
-		const calls = getAnswerCalls(env);
+		const calls = env.filterApiCalls("answerCallbackQuery");
 		expect(calls).toHaveLength(1);
 		expect(calls[0].params.text).toBe("Fallback");
 	});
@@ -273,7 +263,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("string-answer");
 		await tick();
 
-		const calls = getAnswerCalls(env);
+		const calls = env.filterApiCalls("answerCallbackQuery");
 		expect(calls).toHaveLength(1);
 		expect(calls[0].params.text).toBe("Short text");
 	});
@@ -297,7 +287,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("action:1");
 		await tick();
 
-		const calls1 = getAnswerCalls(env);
+		const calls1 = env.filterApiCalls("answerCallbackQuery");
 		expect(calls1).toHaveLength(1);
 		expect(calls1[0].params.text).toBe("Action 1");
 
@@ -305,7 +295,7 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("action:2");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 
 	it("should auto-answer when no handler matches the callback data", async () => {
@@ -324,6 +314,6 @@ describe("autoAnswerCallbackQuery", () => {
 		await user.on(msg).click("unknown-data");
 		await tick();
 
-		expect(getAnswerCalls(env)).toHaveLength(1);
+		expect(env.filterApiCalls("answerCallbackQuery")).toHaveLength(1);
 	});
 });
