@@ -26,7 +26,7 @@ import {
  * 				.text("test2", "test2"),
  * 		}),
  * 	)
- * 	.callbackQuery("test", () => {
+ * 	.callbackQuery("test", (context) => {
  * 	    return context.send("Hii"); // The plugin will call an answerCallbackQuery method since you didn't do it
  * 	})
  * 	.callbackQuery("test2", (context) => {

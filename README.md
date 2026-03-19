@@ -20,7 +20,7 @@ const bot = new Bot(process.env.BOT_TOKEN as string)
                 .text("test2", "test2"),
         })
     )
-    .callbackQuery("test", () => {
+    .callbackQuery("test", (context) => {
         // The plugin will call an answerCallbackQuery method since you didn't do it
         return context.send("Hii");
     })
