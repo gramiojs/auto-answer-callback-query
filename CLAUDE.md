@@ -18,7 +18,7 @@ GramIO plugin that automatically calls `answerCallbackQuery` after `callback_que
 
 ## How the Plugin Works
 
-The plugin registers middleware on the `callback_query` event. It wraps `context.answerCallbackQuery` with a proxy that tracks whether it was called. After `next()` returns, if the handler didn't answer, the plugin auto-calls `answerCallbackQuery` with optional user-provided params. Errors are silently caught (the callback query may have expired).
+The plugin registers middleware on the `callback_query` event via `Plugin.on()`. It wraps `context.answerCallbackQuery` with a proxy that tracks whether it was called. The auto-answer logic is inside `try/finally` around `await next()` — this ensures the callback query is answered even if the user's handler throws. API errors from the auto-answer are silently caught (the callback query may have expired).
 
 `context.answer()` is an alias for `context.answerCallbackQuery()` in GramIO, so the proxy covers both methods.
 

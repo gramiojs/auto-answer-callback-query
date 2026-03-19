@@ -53,9 +53,12 @@ export function autoAnswerCallbackQuery(
 				return originalAnswerCallbackQuery.apply(context, [params]);
 			};
 
-			await next();
-			if (!isAnswered)
-				return context.answerCallbackQuery(params).catch(() => {});
+			try {
+				await next();
+			} finally {
+				if (!isAnswered)
+					await context.answerCallbackQuery(params).catch(() => {});
+			}
 		},
 	);
 }

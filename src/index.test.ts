@@ -104,6 +104,28 @@ describe("autoAnswerCallbackQuery", () => {
 		expect(answerCall?.params.show_alert).toBe(true);
 	});
 
+	it("should still auto-answer when handler throws an error", async () => {
+		const bot = new Bot("test")
+			.extend(autoAnswerCallbackQuery())
+			.callbackQuery("throws", () => {
+				throw new Error("handler error");
+			});
+
+		const env = new TelegramTestEnvironment(bot);
+		const user = env.createUser({ first_name: "Frank" });
+
+		const msg = await user.sendMessage("click me");
+		env.clearApiCalls();
+
+		await user.on(msg).click("throws");
+		await tick();
+
+		const answerCall = env.apiCalls.find(
+			(c) => c.method === "answerCallbackQuery",
+		);
+		expect(answerCall).toBeDefined();
+	});
+
 	it("should auto-answer with empty params when no config provided", async () => {
 		const bot = new Bot("test")
 			.extend(autoAnswerCallbackQuery())
